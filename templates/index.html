@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📶 Network Ranking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth !important;
+      font-variant: slashed-zero;
+    }
+    body {
+      overflow: hidden;
+      font-family: Space, Helvetica, sans-serif;
+      background: var(--sr-bg);
+      color: var(--sr-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100dvh;
+      text-align: center;
+    }
+    :root {
+      --sr-white: #F4F2ED;
+      --sr-primary: #343c3e;
+      --sr-secondary: #D2D1CD;
+      --sr-warn: #ff992b;
+      --sr-dark: #444444;
+      --sr-bg: #F4F2ED;
+    }
+    #container {
+      background: var(--sr-white);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      width: 90%;
+      max-width: 600px;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      animation: popIn 0.7s ease-in-out;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      background: var(--sr-primary);
+      color: var(--sr-white);
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.2s, background 0.3s;
+    }
+    button:hover {
+      background: var(--sr-dark);
+      transform: scale(1.05);
+    }
+    pre {
+      background: #222;
+      color: #0f0;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      border-radius: 0.5rem;
+      text-align: left;
+      font-size: 0.9rem;
+      max-height: 350px;
+      overflow-y: auto;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    pre.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Spinner animation */
+    .spinner {
+      border: 4px solid #ddd;
+      border-top: 4px solid var(--sr-primary);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      margin: 10px auto;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <script>
+    async function scanNetworks() {
+  let output = document.getElementById("output");
+  output.classList.remove("show");
+  output.innerHTML = "<div class='spinner'></div><p>⏳ Scanning networks... Please wait.</p>";
+
+  let response = await fetch("/scan");
+  let result = await response.json();
+
+  setTimeout(() => {
+    if (result.error) {
+      output.innerText = "❌ Error: " + result.error;
+    } else {
+      output.innerText = result.ranking;  // raw ranking table
+    }
+    output.classList.add("show");
+  }, 500);
+}
+
+  </script>
+</head>
+<body>
+  <div id="container">
+    <h1>📶 Network Ranking</h1>
+    <button onclick="scanNetworks()">Scan Networks</button>
+    <pre id="output">Click "Scan Networks" to see available Wi-Fi networks...</pre>
+  </div>
+</body>
+</html>
